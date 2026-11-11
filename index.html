@@ -106,9 +106,15 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
 .stats div{background:rgba(0,0,0,.25);border-radius:10px;padding:8px 4px}
 .stats b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
 .stats span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-@media (prefers-reduced-motion:reduce){.msg{transition:none}#superBtn.ready{animation:none}.rotate .phone{animation:none;transform:rotate(-90deg)}}
+@media (prefers-reduced-motion:reduce){.msg{transition:none}#superBtn.ready{animation:none}.rotate .phone{animation:none;transform:rotate(-90deg)}.big-start{animation:none}}
 .card.menu .col{display:flex;flex-direction:column;gap:13px;min-width:0}
 .startrow{display:flex;gap:10px}
+.overlay.bg{background:linear-gradient(rgba(18,14,28,.6),rgba(18,14,28,.8)),url(title.jpg) center/cover no-repeat,var(--ink);backdrop-filter:none}
+.title-screen{background:url(title.jpg) center/cover no-repeat,var(--ink);backdrop-filter:none;flex-direction:column;justify-content:space-between;align-items:center;
+  padding-block:calc(env(safe-area-inset-top,0px) + 5vh) calc(env(safe-area-inset-bottom,0px) + 6vh)}
+.logo{font-family:var(--font-display);font-size:clamp(44px,10vw,108px);line-height:1;color:var(--flame);letter-spacing:.02em;text-align:center;
+  -webkit-text-stroke:4px var(--ink);paint-order:stroke fill;text-shadow:0 7px 0 var(--ink),0 12px 26px rgba(0,0,0,.5);transform:rotate(-3deg)}
+.big-start{font-size:22px;padding:14px 48px;animation:pulse 1.4s ease-in-out infinite}
 .startrow .btn{flex:1 1 0;min-width:0}
 .btn.ghost.light{color:var(--paper)}
 .card.story{max-width:440px}
@@ -162,7 +168,12 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
 <button class="ctl" id="bombBtn" data-ctl="bomb" aria-label="Bombe"><span class="ico">●</span><span id="bombLbl">BOMBE</span></button>
 <button class="ctl" id="shootBtn" data-ctl="shoot" aria-label="Schießen">SCHUSS<span class="ammo" id="ammo"><i></i><i></i><i></i></span></button>
 
-<div class="overlay" id="menu">
+<div class="overlay title-screen" id="title">
+  <div class="logo" role="heading" aria-level="1">BLASTOPIA</div>
+  <button class="btn big-start" id="titleBtn">Spielen</button>
+</div>
+
+<div class="overlay bg" id="menu" hidden>
   <div class="card menu">
     <div class="col">
     <div class="tag">Prototyp · Jeder gegen jeden · 12 Spieler</div>
@@ -198,7 +209,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
   </div>
 </div>
 
-<div class="overlay" id="storyMenu" hidden>
+<div class="overlay bg" id="storyMenu" hidden>
   <div class="card story">
     <div class="tag">Story-Modus · Einzelspieler</div>
     <div class="big small">Drei Geschichten</div>
@@ -208,7 +219,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
   </div>
 </div>
 
-<div class="overlay" id="storyIntro" hidden>
+<div class="overlay bg" id="storyIntro" hidden>
   <div class="card">
     <div class="tag" id="siTag"></div>
     <div class="big small" id="siTitle"></div>
@@ -1372,6 +1383,7 @@ function openIntro(ci, ki) {
   document.getElementById('siGoal').textContent = `Ziel: ${goalText(k)}`;
   show('storyMenu', false); show('over', false); show('storyIntro', true);
 }
+document.getElementById('titleBtn').addEventListener('click', () => { lockLandscape(); show('title', false); show('menu', true); });
 document.getElementById('storyBtn').addEventListener('click', openStoryMenu);
 document.getElementById('storyBack').addEventListener('click', () => { show('storyMenu', false); show('menu', true); });
 document.getElementById('camps').addEventListener('click', ev => { const b = ev.target.closest('.chap'); if (b && !b.disabled) openIntro(+b.dataset.c, +b.dataset.k); });
