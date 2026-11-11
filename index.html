@@ -96,7 +96,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
 .lvl[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--flame);background:rgba(255,138,31,.12)}
 .legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;font-size:12.5px}
 .legend div{display:flex;align-items:center;gap:7px;min-width:0}
-.legend i{width:16px;height:16px;border-radius:5px;display:inline-block;flex:none}
+.legend img{width:24px;height:24px;flex:none}
 .btn{border:0;border-radius:12px;padding:14px;font-family:var(--font-display);font-size:18px;
   background:var(--flame);color:var(--ink);box-shadow:0 5px 0 var(--flame-dark);cursor:pointer}
 .btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--flame-dark)}
@@ -197,12 +197,12 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
     </div>
     <p class="hint">Links ziehen zum Laufen. Rechts tippen oder den blauen Knopf drücken zum Schießen, mit Auto-Zielen. Der gelbe Super-Knopf lädt sich durch Treffer auf. Lüftungsschächte (graue Gitter) bringen dich zu einem anderen Schacht derselben Ebene. Am PC: WASD, Leertaste Bombe, J Schuss, E Super, Q Waffe.</p>
     <div class="legend">
-      <div><i style="background:#ff8a1f"></i>Mehr Reichweite</div>
-      <div><i style="background:#2a2433;box-shadow:inset 0 0 0 2px #fff6e0"></i>Mehr Bomben</div>
-      <div><i style="background:#3fa9f5"></i>Schneller</div>
-      <div><i style="background:#ef476f"></i>Heilung</div>
-      <div><i style="background:#9b5de5"></i>Abprall-Bomben 15 s</div>
-      <div><i style="background:#2a2433;box-shadow:inset 0 0 0 3px #b6ff9e"></i>Fluch, per Treffer weitergeben</div>
+      <div><img src="icons/icon-range.png" alt="">Mehr Reichweite</div>
+      <div><img src="icons/icon-bomb.png" alt="">Mehr Bomben</div>
+      <div><img src="icons/icon-speed.png" alt="">Schneller</div>
+      <div><img src="icons/icon-heal.png" alt="">Heilung</div>
+      <div><img src="icons/icon-bounce.png" alt="">Abprall-Bomben 15 s</div>
+      <div><img src="icons/icon-curse.png" alt="">Fluch, per Treffer weitergeben</div>
     </div>
     </div>
     <div class="startrow wide"><button class="btn ghost light" id="storyBtn">Story</button><button class="btn" id="startBtn">Freies Spiel</button></div>
@@ -1052,9 +1052,19 @@ function showOver() {
 
 /* ---------- Rendering ---------- */
 function roundRect(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+const ICONS = {};
+if (typeof Image !== 'undefined') ['range', 'bomb', 'speed', 'heal', 'bounce', 'curse', 'star'].forEach(k => {
+  const im = new Image(); im.onload = () => { ICONS[k] = im; }; im.src = `icons/icon-${k}.png`;
+});
 function drawPup(type, x, y) {
   const s = S * .62, bob = Math.sin(time * 4 + x) * S * .04;
   const px = x + (S - s) / 2, py = y + (S - s) / 2 + bob, cx = px + s / 2, cy = py + s / 2, u = s / 10;
+  if (ICONS[type]) {
+    const z = S * .82;
+    ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(x + S / 2, y + S * .88, S * .3, S * .08, 0, 0, 7); ctx.fill();
+    ctx.drawImage(ICONS[type], x + (S - z) / 2, y + (S - z) / 2 - S * .05 + bob, z, z);
+    return;
+  }
   ctx.fillStyle = 'rgba(0,0,0,.2)'; roundRect(px + 2, py + 4, s, s, 7); ctx.fill();
   ctx.fillStyle = type === 'bounce' ? '#e7d8ff' : type === 'curse' ? '#2a2433' : '#fff6e0'; roundRect(px, py, s, s, 7); ctx.fill();
   if (type === 'range') {
@@ -1096,9 +1106,12 @@ function drawCrate(x, y) {
 function drawStar(x, y, v) {
   const cx = x + S / 2, cy = y + S / 2 + Math.sin(time * 3 + x * .1) * S * .04, ro = S * (.26 + Math.min(v, 3) * .05), ri = ro * .45;
   ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.beginPath(); ctx.ellipse(cx, y + S * .86, ro * .8, ro * .25, 0, 0, 7); ctx.fill();
-  ctx.beginPath();
-  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? ri : ro; ctx.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
-  ctx.closePath(); ctx.fillStyle = v >= 3 ? '#ffb703' : '#ffd23f'; ctx.fill(); ctx.strokeStyle = '#8a5a00'; ctx.lineWidth = 2; ctx.stroke();
+  if (ICONS.star) { const z = ro * 2.5; ctx.drawImage(ICONS.star, cx - z / 2, cy - z / 2, z, z); }
+  else {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? ri : ro; ctx.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+    ctx.closePath(); ctx.fillStyle = v >= 3 ? '#ffb703' : '#ffd23f'; ctx.fill(); ctx.strokeStyle = '#8a5a00'; ctx.lineWidth = 2; ctx.stroke();
+  }
   if (v > 1) {
     ctx.fillStyle = '#5a3a00'; ctx.font = `800 ${Math.round(S * .22)}px Rubik, system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(v, cx, cy + 1); ctx.textBaseline = 'alphabetic';
