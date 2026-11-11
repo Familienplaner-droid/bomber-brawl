@@ -1,8 +1,8 @@
-# Bombenlabyrinth (Arbeitstitel)
+# Boomtown Brawl
 
 Prototyp eines Handy-Spiels: Bomben legen wie im Klassiker, schießen und Helden wie in Brawl Stars, dazu Stockwerke, Flüche und Lüftungsschächte. 12 Spieler, jeder gegen jeden, gegen Bots.
 
-Der Prototyp läuft komplett im Browser, auch auf dem Handy. Er dient dazu, das Spielprinzip zu testen, bevor die echte App gebaut wird.
+Der Prototyp läuft komplett im Browser, auch auf dem Handy. Auf dem Handy wird quer gespielt. Er dient dazu, das Spielprinzip zu testen, bevor die echte App gebaut wird.
 
 ## Spielen
 
@@ -33,4 +33,4 @@ Wer den Prototyp ausprobiert, findet die Testfragen in [TESTEN.md](TESTEN.md). R
 
 ## Stand
 
-Frühe Testversion. Alle Grafiken sind Platzhalter, der Name ist ein Arbeitstitel.
+Frühe Testversion. Alle Grafiken sind Platzhalter.

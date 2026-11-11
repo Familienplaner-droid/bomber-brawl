@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#1e1a2b">
-<meta name="description" content="Bombenlabyrinth: Prototyp eines Handy-Spiels. Bomben, Schießen, Helden und Stockwerke, 12 Spieler jeder gegen jeden.">
-<title>Bombenlabyrinth</title>
+<meta name="description" content="Boomtown Brawl: Prototyp eines Handy-Spiels. Bomben, Schießen, Helden und Stockwerke, 12 Spieler jeder gegen jeden.">
+<title>Boomtown Brawl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600;800&display=swap">
 <style>
@@ -106,10 +106,29 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
 .stats div{background:rgba(0,0,0,.25);border-radius:10px;padding:8px 4px}
 .stats b{display:block;font-size:22px;font-variant-numeric:tabular-nums}
 .stats span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-@media (prefers-reduced-motion:reduce){.msg{transition:none}#superBtn.ready{animation:none}}
+@media (prefers-reduced-motion:reduce){.msg{transition:none}#superBtn.ready{animation:none}.rotate .phone{animation:none;transform:rotate(-90deg)}}
+.card.menu .col{display:flex;flex-direction:column;gap:13px;min-width:0}
+.rotate{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;background:var(--ink);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.rotate b{font-family:var(--font-display);font-weight:400;font-size:24px;color:var(--flame);text-shadow:2px 2px 0 #000}
+.rotate span{color:var(--muted);font-size:14px;line-height:1.45;max-width:270px}
+.rotate .phone{width:44px;height:76px;border:4px solid var(--paper);border-radius:10px;margin-bottom:10px;animation:turn 2.2s ease-in-out infinite}
+@keyframes turn{0%,25%{transform:rotate(0)}55%,100%{transform:rotate(-90deg)}}
+@media (orientation:portrait) and (pointer:coarse){.rotate{display:flex}}
+@media (orientation:landscape) and (max-height:540px){
+  .card{padding:14px 18px;gap:10px}
+  .card.menu{max-width:880px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:10px 22px}
+  .card.menu .col{gap:9px}
+  .card.menu .wide{grid-column:1/-1;position:sticky;bottom:0;z-index:2;box-shadow:0 5px 0 var(--flame-dark),0 -14px 18px 6px var(--ink-2)}
+  .card h1{font-size:28px}
+  .levels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lvl span{font-size:11.5px}
+  .hint{font-size:12px}
+}
 </style>
 </head>
 <body>
+<div class="rotate" id="rotate" role="alert"><div class="phone" aria-hidden="true"></div><b>Handy quer halten</b><span>Boomtown Brawl wird im Querformat gespielt. Dreh dein Handy, dann geht es weiter.</span></div>
 <canvas id="game"></canvas>
 <div class="hud">
   <div class="alive" id="alive">12<small>übrig</small></div>
@@ -124,9 +143,10 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
 <button class="ctl" id="shootBtn" data-ctl="shoot" aria-label="Schießen">SCHUSS<span class="ammo" id="ammo"><i></i><i></i><i></i></span></button>
 
 <div class="overlay" id="menu">
-  <div class="card">
+  <div class="card menu">
+    <div class="col">
     <div class="tag">Prototyp · Jeder gegen jeden · 12 Spieler</div>
-    <h1>Bomben&shy;labyrinth</h1>
+    <h1>Boomtown Brawl</h1>
     <div class="tag">Held</div>
     <div class="heroes" id="heroes">
       <button class="hero" data-hero="rex" aria-pressed="true"><b><i style="background:#ff8a1f"></i>Rex</b><span>Sprengmeister · Streuer</span><em>Megabombe</em></button>
@@ -135,6 +155,8 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
       <button class="hero" data-hero="schatten" aria-pressed="false"><b><i style="background:#7a3ea3"></i>Schatten</b><span>Saboteur · Streuer</span><em>Licht aus</em></button>
     </div>
     <p class="hint" id="heroInfo"></p>
+    </div>
+    <div class="col">
     <div class="tag">Level</div>
     <div class="levels" id="levels">
       <button class="lvl" data-level="maze" aria-pressed="true"><b>Klassik-Labyrinth</b><span>Feste Säulen, Kisten und Büsche. Der Allrounder.</span></button>
@@ -151,7 +173,8 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
       <div><i style="background:#9b5de5"></i>Abprall-Bomben 15 s</div>
       <div><i style="background:#2a2433;box-shadow:inset 0 0 0 3px #b6ff9e"></i>Fluch, per Treffer weitergeben</div>
     </div>
-    <button class="btn" id="startBtn">Spielen</button>
+    </div>
+    <button class="btn wide" id="startBtn">Spielen</button>
   </div>
 </div>
 
@@ -863,7 +886,7 @@ function showOver() {
   } else {
     const won = player.alive;
     if (won) { player.place = 1; deathTime = time; }
-    lbl('overTag', won ? 'Letzter im Labyrinth' : 'Ausgeschieden'); lbl('overPlace', won ? 'Sieg!' : `Platz ${player.place}`);
+    lbl('overTag', won ? 'Letzter in Boomtown' : 'Ausgeschieden'); lbl('overPlace', won ? 'Sieg!' : `Platz ${player.place}`);
     lbl('oKills', player.kills); lbl('l1', 'Erwischt'); lbl('oTime', fmt(deathTime)); lbl('l2', 'Überlebt');
   }
   lbl('oCrates', crates);
@@ -1148,10 +1171,11 @@ function renderHud() {
   for (let i = 0; i < 3; i++) hudEls.ammo[i].classList.toggle('on', i < am);
 }
 
+const portraitQ = window.matchMedia ? window.matchMedia('(orientation: portrait) and (pointer: coarse)') : { matches: false };
 let last = performance.now();
 function frame(now) {
   const dt = Math.min(.05, (now - last) / 1000); last = now;
-  if (state === 'play') update(dt);
+  if (state === 'play' && !portraitQ.matches) update(dt);
   render(); renderMini(); renderHud();
   requestAnimationFrame(frame);
 }
@@ -1168,7 +1192,12 @@ document.querySelectorAll('.lvl').forEach(b => b.addEventListener('click', () =>
   newGame(); state = 'menu';
 }));
 newGame(); state = 'menu';
-document.getElementById('startBtn').addEventListener('click', () => { document.getElementById('menu').hidden = true; newGame(); });
+document.getElementById('startBtn').addEventListener('click', () => {
+  try {
+    const el = document.documentElement;
+    if (window.matchMedia && matchMedia('(pointer: coarse)').matches && el.requestFullscreen)
+      el.requestFullscreen().then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {});
+  } catch (_) {} document.getElementById('menu').hidden = true; newGame(); });
 document.getElementById('againBtn').addEventListener('click', () => newGame());
 document.getElementById('menuBtn').addEventListener('click', () => { document.getElementById('over').hidden = true; document.getElementById('menu').hidden = false; newGame(); state = 'menu'; });
 requestAnimationFrame(frame);

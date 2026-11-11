@@ -4,7 +4,7 @@ Danke, dass du testest! Es dauert etwa 15 Minuten.
 
 ## So geht's
 
-1. Öffne das Spiel auf deinem Handy (Querformat oder Hochformat, wie du magst).
+1. Öffne das Spiel auf deinem Handy und halte es quer.
 2. Spiel **ohne Erklärung** los. Finde selbst heraus, wie es funktioniert.
 3. Probiere mindestens **zwei Helden** und **zwei Level** aus, darunter **Sternejagd**.
 4. Spiel insgesamt etwa 5 Runden.
