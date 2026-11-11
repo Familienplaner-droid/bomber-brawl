@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#1e1a2b">
-<meta name="description" content="Boomtown Brawl: Prototyp eines Handy-Spiels. Bomben, Schießen, Helden und Stockwerke, 12 Spieler jeder gegen jeden.">
+<meta name="description" content="Boomtown Brawl: Prototyp eines Handy-Spiels. Bomben, Schießen, Helden, Stockwerke und Story-Modus.">
 <title>Boomtown Brawl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600;800&display=swap">
@@ -108,6 +108,23 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
 .stats span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 @media (prefers-reduced-motion:reduce){.msg{transition:none}#superBtn.ready{animation:none}.rotate .phone{animation:none;transform:rotate(-90deg)}}
 .card.menu .col{display:flex;flex-direction:column;gap:13px;min-width:0}
+.startrow{display:flex;gap:10px}
+.startrow .btn{flex:1 1 0;min-width:0}
+.btn.ghost.light{color:var(--paper)}
+.card.story{max-width:440px}
+.camps{display:flex;flex-direction:column;gap:12px}
+.camp{background:rgba(0,0,0,.25);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.camp h3{font-family:var(--font-display);font-weight:400;font-size:15px;margin:0;color:var(--paper);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.camp h3 small{font-family:var(--font-body);font-size:12px;color:var(--muted);font-weight:600}
+.camp p{margin:0;font-size:12.5px;line-height:1.4;color:var(--muted)}
+.chapters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.chap{border:0;border-radius:9px;padding:7px 4px;font-family:var(--font-display);font-size:15px;cursor:pointer;background:var(--flame);color:var(--ink);box-shadow:0 3px 0 var(--flame-dark)}
+.chap.done{background:#06d6a0;box-shadow:0 3px 0 #04866a}
+.chap[disabled]{background:#3b3352;color:#6f668c;box-shadow:none;cursor:default}
+.chap:focus-visible{outline:3px solid var(--paper);outline-offset:2px}
+.story-text{margin:0;font-size:14.5px;line-height:1.55;color:#e9e1f7}
+.goalbox{background:rgba(255,210,63,.12);border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600;color:#ffd23f}
+.big.small{font-size:28px;line-height:1.05;text-wrap:balance}
 .rotate{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;background:var(--ink);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .rotate b{font-family:var(--font-display);font-weight:400;font-size:24px;color:var(--flame);text-shadow:2px 2px 0 #000}
@@ -119,7 +136,10 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
   .card{padding:14px 18px;gap:10px}
   .card.menu{max-width:880px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:10px 22px}
   .card.menu .col{gap:9px}
-  .card.menu .wide{grid-column:1/-1;position:sticky;bottom:0;z-index:2;box-shadow:0 5px 0 var(--flame-dark),0 -14px 18px 6px var(--ink-2)}
+  .card.menu .wide{grid-column:1/-1;position:sticky;bottom:0;z-index:2;background:var(--ink-2);padding-top:6px;box-shadow:0 -12px 16px 4px var(--ink-2)}
+  .card.story{max-width:900px}
+  .camps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .story-text{font-size:13.5px}
   .card h1{font-size:28px}
   .levels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
   .lvl span{font-size:11.5px}
@@ -174,7 +194,28 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
       <div><i style="background:#2a2433;box-shadow:inset 0 0 0 3px #b6ff9e"></i>Fluch, per Treffer weitergeben</div>
     </div>
     </div>
-    <button class="btn wide" id="startBtn">Spielen</button>
+    <div class="startrow wide"><button class="btn ghost light" id="storyBtn">Story</button><button class="btn" id="startBtn">Freies Spiel</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="storyMenu" hidden>
+  <div class="card story">
+    <div class="tag">Story-Modus · Einzelspieler</div>
+    <div class="big small">Drei Geschichten</div>
+    <p class="story-text" id="storyHero"></p>
+    <div class="camps" id="camps"></div>
+    <button class="btn ghost light" id="storyBack">Zurück zum Menü</button>
+  </div>
+</div>
+
+<div class="overlay" id="storyIntro" hidden>
+  <div class="card">
+    <div class="tag" id="siTag"></div>
+    <div class="big small" id="siTitle"></div>
+    <p class="story-text" id="siText"></p>
+    <div class="goalbox" id="siGoal"></div>
+    <button class="btn" id="siGo">Los geht's</button>
+    <button class="btn ghost light" id="siBack">Zurück</button>
   </div>
 </div>
 
@@ -182,11 +223,13 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
   <div class="card">
     <div class="tag" id="overTag">Runde vorbei</div>
     <div class="big" id="overPlace">Platz 4</div>
+    <p class="story-text" id="overText" hidden></p>
     <div class="stats">
       <div><b id="oKills">0</b><span id="l1">Erwischt</span></div>
       <div><b id="oTime">0:00</b><span id="l2">Überlebt</span></div>
       <div><b id="oCrates">0</b><span>Gesprengt</span></div>
     </div>
+    <button class="btn" id="nextBtn" hidden>Nächstes Kapitel</button>
     <button class="btn" id="againBtn">Nochmal</button>
     <button class="btn ghost" id="menuBtn">Level wählen</button>
   </div>
@@ -219,6 +262,69 @@ const HEROES = {
   schatten: { name: 'Schatten', weapon: 'streuer', hp: 7, speed: 3.4, sup: 'lightsout', supName: 'Licht aus', info: 'Schatten ist am schnellsten (7 Leben). Super Licht aus: 6 Sekunden Dunkelheit für alle anderen, nur du siehst die ganze Ebene.' },
 };
 const HERO_KEYS = Object.keys(HEROES);
+const CITY = 'Boomtown';
+const CAMPAIGNS = [
+  { id: 'tiefe', name: 'Die verschüttete Stadt', pitch: `${CITY} ist über Nacht in der Tiefe versunken. Grab dich hinab und finde heraus, warum.`, chapters: [
+    { title: 'Der Einsturz', level: 'fall', bots: 4, goal: 'reach', floor: 1,
+      intro: `Ein Grollen, dann gibt der Boden nach. Die halbe Stadt ist in die Tiefe gestürzt, und mit ihr dein Bruder. Sprenge die rissigen Stellen im Boden und spring hinterher.`,
+      outro: `Du landest im Staub der zweiten Ebene. Überall liegen glänzende Sterne aus dem alten Stadtschatz. Und du bist nicht allein hier unten.`,
+      tip: 'Rissiger Boden bricht nur durch Explosionen ein. Leg eine Bombe daneben und lauf dann hinein.' },
+    { title: 'Die Grabräuber', level: 'stars', bots: 6, goal: 'stars', target: 12,
+      intro: `Eine Bande Grabräuber plündert den Stadtschatz. Wer die meisten Sterne hat, kann sich den Weg nach unten freikaufen. Sammle 12 Sterne, bevor die Zeit abläuft.`,
+      outro: `Mit vollen Taschen findest du eine Karte: Ganz unten, auf der dritten Ebene, leuchtet etwas. Dort muss dein Bruder sein.`,
+      tip: 'Tiefere Ebenen haben wertvollere Sterne. Wer stirbt, verliert die Hälfte.' },
+    { title: 'Im Dunkel', level: 'fall', bots: 4, goal: 'reach', floor: 2, dark: true,
+      intro: `Hier unten gibt es kein Licht mehr. Du siehst nur, was direkt vor dir liegt, und die anderen auch. Erreiche die dritte Ebene.`,
+      outro: `Auf der untersten Ebene stehst du vor einem riesigen Steinwesen. Hinter ihm, in einem Käfig: dein Bruder.`,
+      tip: 'Im Dunkeln hilft Lumis Leuchtfeuer oder Schattens Super, der dir hier die Gegner zeigt.' },
+    { title: 'Der Wächter der Tiefe', level: 'rubble', bots: 2, goal: 'boss',
+      boss: { name: 'Golem', color: '#8a8494', hp: 28, speed: 2.4, range: 4, bombs: 3, hero: 'rex' },
+      intro: `Der Golem hat die Stadt versenkt, um ihren Schatz zu bewachen. Er ist langsam, aber seine Bomben reichen weit. Besiege ihn.`,
+      outro: `Der Golem zerfällt zu Geröll, der Käfig springt auf. Gemeinsam mit deinem Bruder kletterst du nach oben. ${CITY} wird wieder aufgebaut, und diesmal auf festem Grund.`,
+      tip: 'Halte Abstand zum Golem und triff ihn mit Schüssen. Seine Explosionen sind riesig.' },
+  ] },
+  { id: 'turnier', name: 'Das große Turnier', pitch: `Einmal im Jahr kämpfen die Viertel von ${CITY} um die Krone. Vom Neuling zum Champion.`, chapters: [
+    { title: 'Die Vorrunde', level: 'maze', bots: 3, goal: 'survive',
+      intro: `Willkommen beim großen Brawl von ${CITY}! Als Neuling startest du in der Vorrunde gegen drei andere. Bleib als Letzter übrig.`,
+      outro: `Die Menge jubelt, als der Staub sich legt. Der Turnierleiter nickt dir zu: Das Viertelfinale wartet im Trümmerviertel.`,
+      tip: 'Sprenge zuerst Kisten. Power-ups machen dich stärker.' },
+    { title: 'Das Viertelfinale', level: 'rubble', bots: 5, goal: 'survive',
+      intro: `Im Trümmerviertel ist alles sprengbar. Fünf Gegner, keine sicheren Wände. Bleib als Letzter übrig.`,
+      outro: `Du hast das Trümmerviertel erobert. Im Halbfinale zählt nicht, wer überlebt, sondern wer am meisten sammelt.`,
+      tip: 'Auch Steine lassen sich sprengen. Bau dir Fluchtwege.' },
+    { title: 'Die Sternenrunde', level: 'stars', bots: 7, goal: 'rank1',
+      intro: `Halbfinale: zwei Minuten Sternejagd über drei Ebenen. Nur wer am Ende die meisten Sterne hat, kommt ins Finale.`,
+      outro: `Platz eins! Im Finale wartet der amtierende Champion: Blitz, der schnellste Brawler der Stadt.`,
+      tip: 'Mit der Krone sehen dich alle. Manchmal lohnt es sich, kurz Zweiter zu sein.' },
+    { title: 'Finale gegen Blitz', level: 'maze', bots: 3, goal: 'boss',
+      boss: { name: 'Blitz', color: '#ffe066', hp: 20, speed: 3.7, range: 3, bombs: 2, hero: 'lumi' },
+      intro: `Blitz hat das Turnier drei Jahre in Folge gewonnen. Er ist schnell, trifft gut und sieht mit seinem Leuchtfeuer jeden. Besiege ihn.`,
+      outro: `Blitz liegt im Staub und reicht dir anerkennend die Hand. Du bist der neue Champion von ${CITY}!`,
+      tip: 'Blitz ist schnell, aber hat wenig Leben. Fallen mit mehreren Bomben helfen.' },
+  ] },
+  { id: 'saboteur', name: 'Der Saboteur', pitch: `Lichter fallen aus, Kisten sind verflucht. Jemand sabotiert ${CITY}. Finde heraus, wer.`, chapters: [
+    { title: 'Stromausfall', level: 'maze', bots: 4, goal: 'survive', dark: true,
+      intro: `Mitten in der Nacht geht in ganz ${CITY} das Licht aus. Im Dunkeln fallen Brawler übereinander her. Überlebe die Nacht.`,
+      outro: `Im Morgengrauen findest du ein durchtrenntes Stromkabel und lila Fußspuren. Das war kein Unfall.`,
+      tip: 'Im Dunkeln sieht dich niemand von Weitem. Nutze das für Überraschungsangriffe.' },
+    { title: 'Verfluchte Kisten', level: 'rubble', bots: 5, goal: 'survive', curses: true,
+      intro: `Die Spur führt ins Trümmerviertel. Doch jemand hat die Kisten verflucht. Fast jedes Power-up hier ist ein Fluch. Überlebe.`,
+      outro: `Zwischen den Trümmern liegt eine zerbrochene Maske. Der Saboteur kann sich offenbar verwandeln.`,
+      tip: 'Einen Fluch wirst du los, indem du jemanden anschießt oder berührst.' },
+    { title: 'Falsche Kisten', level: 'maze', bots: 5, goal: 'survive', botHero: 'mimik', botCharge: true,
+      intro: `Alle Gegner hier sind Gestaltwandler. Manche Kisten sind gar keine Kisten. Vertraue nichts und niemandem.`,
+      outro: `Einer der Gestaltwandler verrät dir im letzten Atemzug ein Versteck: das alte Kraftwerk. Dort wartet der Saboteur.`,
+      tip: 'Kisten, die sich bewegen, sind Gegner. Ein Leuchtfeuer zeigt alle Getarnten.' },
+    { title: 'Entlarvt', level: 'maze', bots: 3, goal: 'boss',
+      boss: { name: 'Nachtfalter', color: '#7a3ea3', hp: 24, speed: 3.6, range: 3, bombs: 2, hero: 'schatten' },
+      intro: `Im Kraftwerk steht er: Nachtfalter, ein ehemaliger Turnierchampion, der sich an der Stadt rächen will. Er schaltet immer wieder das Licht aus. Besiege ihn.`,
+      outro: `Nachtfalter ist besiegt, und die Lichter von ${CITY} gehen wieder an. Die Stadt feiert dich als Helden.`,
+      tip: 'Wenn das Licht ausgeht, zieh dich zurück und warte, bis es wieder hell wird.' },
+  ] },
+];
+const GOALS = { survive: 'Bleib als Letzter übrig', reach: c => `Erreiche Ebene ${c.floor + 1}`, stars: c => `Sammle ${c.target} Sterne in 2 Minuten`,
+  rank1: 'Hab nach 2 Minuten die meisten Sterne', boss: c => `Besiege ${c.boss.name}` };
+const goalText = c => typeof GOALS[c.goal] === 'function' ? GOALS[c.goal](c) : GOALS[c.goal];
 const C = { ink:'#1e1a2b', stone:'#33506a', stoneTop:'#4a6d8a', stoneDark:'#22384c', rock:'#8a8494', rockTop:'#a7a1b0', rockDark:'#5d5868',
   crate:'#c9762f', crateDark:'#8e4d19', crateLine:'#a65e22', bush:'#3f8f3a', bushDark:'#2e6e2b', storm:'122,62,163', flame:'#ff8a1f', flame2:'#ffd23f' };
 const fl = Math.floor, idx = (c, r) => r * W + c;
@@ -229,7 +335,7 @@ let S = 44, vw = 0, vh = 0, dpr = 1, level = 'maze';
 let floors, ents, player, time, zoneRing, nextZoneAt, state = 'menu';
 let grid, bush, pups, flame, flameOwner, bombs, danger, crack, curF = 0, lastFloor = true;
 let shots = [], sparks = [], booms = [], floaters = [], shake = 0, crates = 0, deathTime = 0, overShown = false;
-let stars, mode = 'royale', leader = null, starSpawnT = 0, heroSel = 'rex', darkT = 0, darkOwner = null, lastDark = -99;
+let story = null, storyRef = null, freeLevel = 'maze', stars, mode = 'royale', leader = null, starSpawnT = 0, heroSel = 'rex', darkT = 0, darkOwner = null, lastDark = -99;
 const dist = new Int16Array(N), prev = new Int32Array(N);
 const multi = () => level === 'fall' || level === 'stars';
 const spd = e => e.speed * (e.curse === 'slow' ? .55 : 1) * (e.disguiseT > 0 ? .8 : 1);
@@ -306,7 +412,7 @@ function generate() {
 }
 
 function mkEnt(i, c, r) {
-  const hero = i === 0 ? heroSel : HERO_KEYS[fl(Math.random() * HERO_KEYS.length)], H0 = HEROES[hero];
+  const hero = i === 0 ? heroSel : (story && story.botHero) || HERO_KEYS[fl(Math.random() * HERO_KEYS.length)], H0 = HEROES[hero];
   return { id: i, name: NAMES[i], color: COLORS[i], x: c + .5, y: r + .5, f: 0, hp: H0.hp, maxHp: H0.hp, hero, blastInv: 0, hit: 0,
     speed: H0.speed, spLvl: 1, range: 2, maxBombs: 1, bombsOut: 0, alive: true, isPlayer: i === 0, fx: 0, fy: 1, pass: new Set(),
     path: [], think: Math.random() * .3, kills: 0, stormT: .6, walk: 0, moving: false, aggr: .7 + Math.random() * .8,
@@ -360,11 +466,16 @@ function passCurse(from, to) {
 
 function newGame() {
   const spawns = generate();
-  ents = spawns.map((s, i) => mkEnt(i, s[0], s[1]));
+  ents = spawns.slice(0, story ? story.bots + 1 : 12).map((s, i) => mkEnt(i, s[0], s[1]));
   player = ents[0]; shots = []; sparks = []; booms = []; floaters = []; time = 0; zoneRing = 1;
   nextZoneAt = level === 'fall' ? 45 : 35;
   crates = 0; deathTime = 0; overShown = false; shake = 0; lastHud = '';
   mode = level === 'stars' ? 'stars' : 'royale'; leader = null; starSpawnT = 2.2; darkT = 0; darkOwner = null; lastDark = -99;
+  if (story) {
+    if (story.dark) { darkT = 1e9; darkOwner = null; }
+    if (story.botCharge) ents.forEach(e => { if (!e.isPlayer) e.charge = .7 + Math.random() * .3; });
+    if (story.boss) { const B = story.boss; Object.assign(ents[1], { boss: true, name: B.name, color: B.color, hp: B.hp, maxHp: B.hp, speed: B.speed, range: B.range, maxBombs: B.bombs, aggr: 2.2, hero: B.hero, weapon: HEROES[B.hero].weapon }); }
+  }
   if (mode === 'stars') { nextZoneAt = Infinity; floors.forEach((L, i) => { for (let k = 0; k < 4 + i * 3; k++) addStar(i, i + 1, k % 3 !== 0); }); }
   document.getElementById('feed').innerHTML = '';
   document.getElementById('over').hidden = true;
@@ -450,7 +561,7 @@ function explode(b) {
     if (g === CRATE || g === STONE) {
       grid[t] = FLOOR; if (b.owner === player) crates++;
       if (Math.random() < (g === CRATE ? .34 : .12)) {
-        const roll = Math.random();
+        const roll = story && story.curses && Math.random() < .45 ? 1 : Math.random();
         pups.set(t, roll < .24 ? 'range' : roll < .46 ? 'bomb' : roll < .62 ? 'speed' : roll < .75 ? 'heal' : roll < .87 ? 'bounce' : 'curse');
       }
     }
@@ -601,6 +712,7 @@ function useSuper(e) {
   if (h.sup === 'mega') { const [ax, ay] = aimFor(e, 7); throwBomb(e, ax, ay, 2, true); }
   else if (h.sup === 'flare') e.revealT = 5;
   else if (h.sup === 'disguise') e.disguiseT = 6;
+  else if (story && story.dark) e.revealT = 5;
   else { darkT = 6; darkOwner = e; lastDark = time; feedMsg(e.isPlayer ? 'Licht aus! Nur du siehst alles' : `${e.name} hat das Licht ausgeschaltet`); }
   if (e.isPlayer) floaters.push({ x: e.x, y: e.y - .5, f: e.f, text: h.supName, t: 1 });
   else if (h.sup === 'flare' && player.f === e.f) feedMsg(`${e.name} hat ein Leuchtfeuer gezündet`);
@@ -826,7 +938,7 @@ function update(dt) {
     e.ammo = Math.min(3, e.ammo + dt / WEAPONS[e.weapon].reload);
     e.bounceT = Math.max(0, e.bounceT - dt);
     e.curseLock = Math.max(0, e.curseLock - dt);
-    e.charge = Math.min(1, e.charge + dt / 40);
+    e.charge = Math.min(1, e.charge + dt / (e.boss ? 12 : 40));
     e.revealT = Math.max(0, e.revealT - dt); e.disguiseT = Math.max(0, e.disguiseT - dt);
     if (e.curse) {
       e.curseT -= dt;
@@ -871,13 +983,47 @@ function update(dt) {
   }
 
   if (overShown) return;
+  if (story) { const res = storyCheck(); if (res !== null) showStoryOver(res); return; }
   if (mode === 'stars') { if (time >= STAR_TIME) showOver(); return; }
   const alive = ents.filter(e => e.alive);
   if ((!player.alive && time - deathTime > 1.3) || (player.alive && alive.length === 1)) showOver();
 }
 
+function storyCheck() {
+  const g = story.goal;
+  if (g === 'stars') return player.stars >= story.target ? true : time >= STAR_TIME ? false : null;
+  if (g === 'rank1') return time >= STAR_TIME ? (starRank(player) === 1 && player.stars > 0) : null;
+  if (!player.alive) return time - deathTime > 1.2 ? false : null;
+  if (g === 'reach') return player.f >= story.floor ? true : null;
+  if (g === 'boss') return ents.some(e => e.boss && e.alive) ? null : true;
+  return ents.filter(e => e.alive).length === 1 ? true : null;
+}
+function loadProg() { try { return JSON.parse(localStorage.getItem('bb-story') || '{}') || {}; } catch (_) { return {}; } }
+function saveProg(p) { try { localStorage.setItem('bb-story', JSON.stringify(p)); } catch (_) {} }
+let storyProg = loadProg();
+function showStoryOver(won) {
+  overShown = true;
+  const [ci, ki] = storyRef, camp = CAMPAIGNS[ci], last = ki === camp.chapters.length - 1;
+  const lbl = (id, t) => { document.getElementById(id).textContent = t; };
+  if (won) { storyProg[camp.id] = Math.max(storyProg[camp.id] || 0, ki + 1); saveProg(storyProg); }
+  lbl('overTag', won ? (last ? 'Geschichte abgeschlossen!' : `Kapitel ${ki + 1} geschafft`) : `Kapitel ${ki + 1} nicht geschafft`);
+  lbl('overPlace', story.title);
+  document.getElementById('overPlace').classList.add('small');
+  const ot = document.getElementById('overText'); ot.hidden = false;
+  ot.textContent = won ? story.outro : `Tipp: ${story.tip}`;
+  lbl('oKills', player.kills); lbl('l1', 'Erwischt');
+  if (mode === 'stars') { lbl('oTime', player.stars); lbl('l2', 'Sterne'); } else { lbl('oTime', fmt(time)); lbl('l2', 'Zeit'); }
+  lbl('oCrates', crates);
+  document.getElementById('nextBtn').hidden = !(won && !last);
+  lbl('againBtn', won ? 'Nochmal spielen' : 'Nochmal versuchen');
+  lbl('menuBtn', 'Zur Story-Übersicht');
+  document.getElementById('over').hidden = false;
+}
+
 function showOver() {
   overShown = true;
+  document.getElementById('overText').hidden = true; document.getElementById('nextBtn').hidden = true;
+  document.getElementById('overPlace').classList.remove('small');
   const lbl = (id, t) => { document.getElementById(id).textContent = t; };
   if (mode === 'stars') {
     const rank = starRank(player);
@@ -889,7 +1035,7 @@ function showOver() {
     lbl('overTag', won ? 'Letzter in Boomtown' : 'Ausgeschieden'); lbl('overPlace', won ? 'Sieg!' : `Platz ${player.place}`);
     lbl('oKills', player.kills); lbl('l1', 'Erwischt'); lbl('oTime', fmt(deathTime)); lbl('l2', 'Überlebt');
   }
-  lbl('oCrates', crates);
+  lbl('oCrates', crates); lbl('againBtn', 'Nochmal'); lbl('menuBtn', 'Level wählen');
   document.getElementById('over').hidden = false;
 }
 
@@ -948,7 +1094,7 @@ function drawStar(x, y, v) {
   }
 }
 function drawEnt(e, x, y, alpha) {
-  const bob = e.moving ? Math.abs(Math.sin(e.walk)) * S * .06 : 0, rad = S * .36;
+  const bob = e.moving ? Math.abs(Math.sin(e.walk)) * S * .06 : 0, rad = S * .36 * (e.boss ? 1.3 : 1);
   if (e.blastInv > 0 && fl(e.blastInv * 12) % 2) alpha *= .45;
   ctx.globalAlpha = alpha;
   ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(x, y + rad * .85, rad * .85, rad * .3, 0, 0, 7); ctx.fill();
@@ -1151,11 +1297,12 @@ function renderHud() {
   const z = sm ? (!player.alive ? `Neustart oben in ${Math.max(0, Math.ceil(player.respawn))} s` : `Noch ${fmt(Math.ceil(Math.max(0, STAR_TIME - time)))}`)
     : zoneRing >= MAX_RING ? 'Sturm voll ausgebreitet' : `Sturm in ${Math.max(0, Math.ceil(nextZoneAt - time))} s`;
   const left = player.maxBombs - player.bombsOut, bt = Math.ceil(player.bounceT), am = player.curse === 'nofire' ? 0 : fl(player.ammo);
-  const ct = player.curse ? Math.ceil(player.curseT) : 0, fx = [Math.ceil(player.revealT), Math.ceil(player.disguiseT), darkOwner === player ? Math.ceil(darkT) : 0], lead = sm && leader ? `${leader.name}${leader.stars}` : '';
-  const key = [sm, alive, player.range, player.maxBombs, player.spLvl, z, left, bt, am, player.weapon, player.f, player.curse, ct, player.stars, lead, fx.join()].join('|');
+  const ct = player.curse ? Math.ceil(player.curseT) : 0, fx = [Math.ceil(player.revealT), Math.ceil(player.disguiseT), darkOwner === player ? Math.ceil(darkT) : 0], lead = sm && leader ? `${leader.name}${leader.stars}` : '', goal = story ? (story.goal === 'stars' ? `Ziel: ${player.stars} / ${story.target} ★` : `Ziel: ${goalText(story)}`) : '';
+  const key = [sm, alive, player.range, player.maxBombs, player.spLvl, z, left, bt, am, player.weapon, player.f, player.curse, ct, player.stars, lead, fx.join(), goal].join('|');
   if (key === lastHud) return; lastHud = key;
   hudEls.alive.innerHTML = sm ? `★ ${player.stars}<small>Platz ${starRank(player)}</small>` : `${alive}<small>übrig</small>`;
-  let chips = `<div class="chip">Reichweite <b>${player.range}</b></div><div class="chip">Bomben <b>${player.maxBombs}</b></div><div class="chip">Tempo <b>${player.spLvl}</b></div>`;
+  let chips = goal ? `<div class="chip gold"><b>${goal}</b></div>` : '';
+  chips += `<div class="chip">Reichweite <b>${player.range}</b></div><div class="chip">Bomben <b>${player.maxBombs}</b></div><div class="chip">Tempo <b>${player.spLvl}</b></div>`;
   if (floors.length > 1) chips += `<div class="chip">Ebene <b>${player.f + 1}/${floors.length}</b></div>`;
   if (bt > 0) chips += `<div class="chip hot">Abprall <b>${bt} s</b></div>`;
   if (fx[0]) chips += `<div class="chip hot">Leuchtfeuer <b>${fx[0]} s</b></div>`;
@@ -1164,7 +1311,7 @@ function renderHud() {
   if (ct > 0) chips += `<div class="chip curse">${CURSES[player.curse]} <b>${ct} s</b></div>`;
   if (sm && leader && leader !== player) chips += `<div class="chip gold">Krone: ${leader.name} <b>★ ${leader.stars}</b></div>`;
   hudEls.chips.innerHTML = chips;
-  hudEls.zone.textContent = z;
+  hudEls.zone.textContent = story && story.dark && !darkOwner ? `Dunkelheit · ${z}` : z;
   hudEls.bombLbl.textContent = bt > 0 ? `${left}× WURF` : `${left}× BOMBE`;
   hudEls.bomb.classList.toggle('bounce', bt > 0);
   hudEls.sw.textContent = WEAPONS[player.weapon].name;
@@ -1187,7 +1334,7 @@ document.querySelectorAll('.hero').forEach(b => b.addEventListener('click', () =
   document.querySelectorAll('.hero').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
 }));
 document.querySelectorAll('.lvl').forEach(b => b.addEventListener('click', () => {
-  level = b.dataset.level;
+  level = freeLevel = b.dataset.level; story = null; storyRef = null;
   document.querySelectorAll('.lvl').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
   newGame(); state = 'menu';
 }));
@@ -1197,9 +1344,49 @@ document.getElementById('startBtn').addEventListener('click', () => {
     const el = document.documentElement;
     if (window.matchMedia && matchMedia('(pointer: coarse)').matches && el.requestFullscreen)
       el.requestFullscreen().then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {});
-  } catch (_) {} document.getElementById('menu').hidden = true; newGame(); });
+  } catch (_) {} story = null; storyRef = null; level = freeLevel; document.getElementById('menu').hidden = true; newGame(); });
+const show = (id, on) => { document.getElementById(id).hidden = !on; };
+function lockLandscape() {
+  try {
+    const el = document.documentElement;
+    if (window.matchMedia && matchMedia('(pointer: coarse)').matches && el.requestFullscreen && !document.fullscreenElement)
+      el.requestFullscreen().then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {});
+  } catch (_) {}
+}
+function openStoryMenu() {
+  storyProg = loadProg();
+  document.getElementById('storyHero').textContent = `Du spielst als ${HEROES[heroSel].name}. Den Helden wechselst du im Hauptmenü.`;
+  document.getElementById('camps').innerHTML = CAMPAIGNS.map((c, ci) => {
+    const done = storyProg[c.id] || 0;
+    return `<div class="camp"><h3>${c.name}<small>${Math.min(done, c.chapters.length)} / ${c.chapters.length}</small></h3><p>${c.pitch}</p>
+      <div class="chapters">${c.chapters.map((k, ki) => `<button class="chap${ki < done ? ' done' : ''}" data-c="${ci}" data-k="${ki}" ${ki > done ? 'disabled' : ''} aria-label="Kapitel ${ki + 1}: ${k.title}${ki > done ? ' (gesperrt)' : ''}">${ki < done ? '✓' : ki + 1}</button>`).join('')}</div></div>`;
+  }).join('');
+  show('menu', false); show('over', false); show('storyIntro', false); show('storyMenu', true);
+}
+function openIntro(ci, ki) {
+  const c = CAMPAIGNS[ci], k = c.chapters[ki];
+  storyRef = [ci, ki];
+  document.getElementById('siTag').textContent = `${c.name} · Kapitel ${ki + 1} von ${c.chapters.length}`;
+  document.getElementById('siTitle').textContent = k.title;
+  document.getElementById('siText').textContent = k.intro;
+  document.getElementById('siGoal').textContent = `Ziel: ${goalText(k)}`;
+  show('storyMenu', false); show('over', false); show('storyIntro', true);
+}
+document.getElementById('storyBtn').addEventListener('click', openStoryMenu);
+document.getElementById('storyBack').addEventListener('click', () => { show('storyMenu', false); show('menu', true); });
+document.getElementById('camps').addEventListener('click', ev => { const b = ev.target.closest('.chap'); if (b && !b.disabled) openIntro(+b.dataset.c, +b.dataset.k); });
+document.getElementById('siBack').addEventListener('click', openStoryMenu);
+document.getElementById('siGo').addEventListener('click', () => {
+  lockLandscape();
+  const [ci, ki] = storyRef; story = CAMPAIGNS[ci].chapters[ki]; level = story.level;
+  show('storyIntro', false); newGame();
+});
+document.getElementById('nextBtn').addEventListener('click', () => { const [ci, ki] = storyRef; openIntro(ci, ki + 1); });
 document.getElementById('againBtn').addEventListener('click', () => newGame());
-document.getElementById('menuBtn').addEventListener('click', () => { document.getElementById('over').hidden = true; document.getElementById('menu').hidden = false; newGame(); state = 'menu'; });
+document.getElementById('menuBtn').addEventListener('click', () => {
+  if (story) { openStoryMenu(); return; }
+  show('over', false); show('menu', true); newGame(); state = 'menu';
+});
 requestAnimationFrame(frame);
 })();
 </script>

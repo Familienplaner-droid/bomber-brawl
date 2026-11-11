@@ -26,6 +26,7 @@ Der Prototyp läuft komplett im Browser, auch auf dem Handy. Auf dem Handy wird 
 - **Level:** Klassik-Labyrinth, Trümmerfeld, Absturz (3 Stockwerke), Sternejagd (2 Minuten, Sterne sammeln)
 - **Power-ups:** Reichweite, Bomben, Tempo, Heilung, Abprall-Bomben, Flüche
 - **Lüftungsschächte:** bringen dich zu einem anderen Schacht derselben Ebene
+- **Story-Modus:** drei Geschichten mit je vier Kapiteln (Die verschüttete Stadt, Das große Turnier, Der Saboteur), Fortschritt wird im Browser gespeichert
 
 ## Testen
 
