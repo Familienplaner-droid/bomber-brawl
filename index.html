@@ -72,7 +72,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
 .hero{display:flex;flex-direction:column;gap:2px;text-align:left;border:0;border-radius:12px;padding:9px 11px;cursor:pointer;min-width:0;
   background:rgba(0,0,0,.25);color:var(--paper);font-family:var(--font-body);box-shadow:inset 0 0 0 2px transparent}
 .hero b{font-family:var(--font-display);font-weight:400;font-size:15px;display:flex;align-items:center;gap:6px}
-.hero b i{width:12px;height:12px;border-radius:50%;flex:none}
+.hero b img{width:38px;height:38px;flex:none;margin:-8px 0 -6px -2px}
 .hero span{font-size:12px;color:var(--muted)}
 .hero em{font-style:normal;font-size:12px;font-weight:600;color:#ffd23f}
 .hero[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #ffd23f;background:rgba(255,210,63,.1)}
@@ -180,10 +180,10 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
     <h1>Blastopia</h1>
     <div class="tag">Held</div>
     <div class="heroes" id="heroes">
-      <button class="hero" data-hero="rex" aria-pressed="true"><b><i style="background:#ff8a1f"></i>Rex</b><span>Sprengmeister · Streuer</span><em>Megabombe</em></button>
-      <button class="hero" data-hero="lumi" aria-pressed="false"><b><i style="background:#fff4a3"></i>Lumi</b><span>Späherin · Blaster</span><em>Leuchtfeuer</em></button>
-      <button class="hero" data-hero="mimik" aria-pressed="false"><b><i style="background:#c9762f"></i>Mimik</b><span>Gestaltwandler · Blaster</span><em>Tarnung</em></button>
-      <button class="hero" data-hero="schatten" aria-pressed="false"><b><i style="background:#7a3ea3"></i>Schatten</b><span>Saboteur · Streuer</span><em>Licht aus</em></button>
+      <button class="hero" data-hero="rex" aria-pressed="true"><b><img src="heroes/hero-rex.png" alt="">Rex</b><span>Sprengmeister · Streuer</span><em>Megabombe</em></button>
+      <button class="hero" data-hero="lumi" aria-pressed="false"><b><img src="heroes/hero-lumi.png" alt="">Lumi</b><span>Späherin · Blaster</span><em>Leuchtfeuer</em></button>
+      <button class="hero" data-hero="mimik" aria-pressed="false"><b><img src="heroes/hero-mimik.png" alt="">Mimik</b><span>Gestaltwandler · Blaster</span><em>Tarnung</em></button>
+      <button class="hero" data-hero="schatten" aria-pressed="false"><b><img src="heroes/hero-schatten.png" alt="">Schatten</b><span>Saboteur · Streuer</span><em>Licht aus</em></button>
     </div>
     <p class="hint" id="heroInfo"></p>
     </div>
@@ -289,7 +289,7 @@ const CAMPAIGNS = [
       outro: `Auf der untersten Ebene stehst du vor einem riesigen Steinwesen. Hinter ihm, in einem Käfig: dein Bruder.`,
       tip: 'Im Dunkeln hilft Lumis Leuchtfeuer oder Schattens Super, der dir hier die Gegner zeigt.' },
     { title: 'Der Wächter der Tiefe', level: 'rubble', bots: 2, goal: 'boss',
-      boss: { name: 'Golem', color: '#8a8494', hp: 28, speed: 2.4, range: 4, bombs: 3, hero: 'rex' },
+      boss: { name: 'Golem', color: '#8a8494', filter: 'grayscale(1) brightness(.85) contrast(1.1)', hp: 28, speed: 2.4, range: 4, bombs: 3, hero: 'rex' },
       intro: `Der Golem hat die Stadt versenkt, um ihren Schatz zu bewachen. Er ist langsam, aber seine Bomben reichen weit. Besiege ihn.`,
       outro: `Der Golem zerfällt zu Geröll, der Käfig springt auf. Gemeinsam mit deinem Bruder kletterst du nach oben. ${CITY} wird wieder aufgebaut, und diesmal auf festem Grund.`,
       tip: 'Halte Abstand zum Golem und triff ihn mit Schüssen. Seine Explosionen sind riesig.' },
@@ -308,7 +308,7 @@ const CAMPAIGNS = [
       outro: `Platz eins! Im Finale wartet der amtierende Champion: Blitz, der schnellste Brawler der Stadt.`,
       tip: 'Mit der Krone sehen dich alle. Manchmal lohnt es sich, kurz Zweiter zu sein.' },
     { title: 'Finale gegen Blitz', level: 'maze', bots: 3, goal: 'boss',
-      boss: { name: 'Blitz', color: '#ffe066', hp: 20, speed: 3.7, range: 3, bombs: 2, hero: 'lumi' },
+      boss: { name: 'Blitz', color: '#ffe066', filter: 'saturate(1.7) brightness(1.08)', hp: 20, speed: 3.7, range: 3, bombs: 2, hero: 'lumi' },
       intro: `Blitz hat das Turnier drei Jahre in Folge gewonnen. Er ist schnell, trifft gut und sieht mit seinem Leuchtfeuer jeden. Besiege ihn.`,
       outro: `Blitz liegt im Staub und reicht dir anerkennend die Hand. Du bist der neue Champion von ${CITY}!`,
       tip: 'Blitz ist schnell, aber hat wenig Leben. Fallen mit mehreren Bomben helfen.' },
@@ -327,7 +327,7 @@ const CAMPAIGNS = [
       outro: `Einer der Gestaltwandler verrät dir im letzten Atemzug ein Versteck: das alte Kraftwerk. Dort wartet der Saboteur.`,
       tip: 'Kisten, die sich bewegen, sind Gegner. Ein Leuchtfeuer zeigt alle Getarnten.' },
     { title: 'Entlarvt', level: 'maze', bots: 3, goal: 'boss',
-      boss: { name: 'Nachtfalter', color: '#7a3ea3', hp: 24, speed: 3.6, range: 3, bombs: 2, hero: 'schatten' },
+      boss: { name: 'Nachtfalter', color: '#7a3ea3', filter: 'hue-rotate(35deg) saturate(1.4) brightness(.85)', hp: 24, speed: 3.6, range: 3, bombs: 2, hero: 'schatten' },
       intro: `Im Kraftwerk steht er: Nachtfalter, ein ehemaliger Turnierchampion, der sich an der Stadt rächen will. Er schaltet immer wieder das Licht aus. Besiege ihn.`,
       outro: `Nachtfalter ist besiegt, und die Lichter von ${CITY} gehen wieder an. Die Stadt feiert dich als Helden.`,
       tip: 'Wenn das Licht ausgeht, zieh dich zurück und warte, bis es wieder hell wird.' },
@@ -485,7 +485,7 @@ function newGame() {
   if (story) {
     if (story.dark) { darkT = 1e9; darkOwner = null; }
     if (story.botCharge) ents.forEach(e => { if (!e.isPlayer) e.charge = .7 + Math.random() * .3; });
-    if (story.boss) { const B = story.boss; Object.assign(ents[1], { boss: true, name: B.name, color: B.color, hp: B.hp, maxHp: B.hp, speed: B.speed, range: B.range, maxBombs: B.bombs, aggr: 2.2, hero: B.hero, weapon: HEROES[B.hero].weapon }); }
+    if (story.boss) { const B = story.boss; Object.assign(ents[1], { boss: true, name: B.name, color: B.color, hp: B.hp, maxHp: B.hp, speed: B.speed, range: B.range, maxBombs: B.bombs, aggr: 2.2, filter: B.filter, hero: B.hero, weapon: HEROES[B.hero].weapon }); }
   }
   if (mode === 'stars') { nextZoneAt = Infinity; floors.forEach((L, i) => { for (let k = 0; k < 4 + i * 3; k++) addStar(i, i + 1, k % 3 !== 0); }); }
   document.getElementById('feed').innerHTML = '';
@@ -1052,6 +1052,10 @@ function showOver() {
 
 /* ---------- Rendering ---------- */
 function roundRect(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+const HERO_IMG = {}, HERO_FACE = { rex: 1, lumi: 1, mimik: 0, schatten: -1 };
+if (typeof Image !== 'undefined') ['rex', 'lumi', 'mimik', 'schatten'].forEach(k => {
+  const im = new Image(); im.onload = () => { HERO_IMG[k] = im; }; im.src = `heroes/hero-${k}.png`;
+});
 const ICONS = {};
 if (typeof Image !== 'undefined') ['range', 'bomb', 'speed', 'heal', 'bounce', 'curse', 'star'].forEach(k => {
   const im = new Image(); im.onload = () => { ICONS[k] = im; }; im.src = `icons/icon-${k}.png`;
@@ -1121,38 +1125,52 @@ function drawEnt(e, x, y, alpha) {
   const bob = e.moving ? Math.abs(Math.sin(e.walk)) * S * .06 : 0, rad = S * .36 * (e.boss ? 1.3 : 1);
   if (e.blastInv > 0 && fl(e.blastInv * 12) % 2) alpha *= .45;
   ctx.globalAlpha = alpha;
-  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(x, y + rad * .85, rad * .85, rad * .3, 0, 0, 7); ctx.fill();
-  ctx.fillStyle = e.hit > 0 ? '#ffffff' : e.color; ctx.strokeStyle = '#1e1a2b'; ctx.lineWidth = Math.max(2, S * .06);
-  ctx.beginPath(); ctx.arc(x, y - bob, rad, 0, 7); ctx.fill(); ctx.stroke();
-  // weapon nub in facing direction
-  const m = Math.hypot(e.fx, e.fy) || 1, ax = e.fx / m, ay = e.fy / m;
-  ctx.fillStyle = e.weapon === 'blaster' ? '#3fa9f5' : '#f78c6b';
-  ctx.beginPath(); ctx.arc(x + ax * rad * 1.02, y - bob + ay * rad * 1.02, rad * .26, 0, 7); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(x - rad * .35, y - bob - rad * .4, rad * .28, 0, 7); ctx.fill();
-  const hy = y - bob - rad;
-  ctx.strokeStyle = '#1e1a2b'; ctx.lineWidth = Math.max(2, S * .05);
-  if (e.hero === 'rex') {
-    ctx.fillStyle = '#ff8a1f'; ctx.beginPath(); ctx.moveTo(x - rad * .5, hy + rad * .3); ctx.lineTo(x - rad * .32, hy - rad * .3); ctx.lineTo(x - rad * .08, hy + rad * .22);
-    ctx.lineTo(x + rad * .14, hy - rad * .38); ctx.lineTo(x + rad * .42, hy + rad * .26); ctx.closePath(); ctx.fill(); ctx.stroke();
-  } else if (e.hero === 'lumi') {
-    ctx.beginPath(); ctx.moveTo(x, hy + 2); ctx.lineTo(x + rad * .25, hy - rad * .45); ctx.stroke();
-    ctx.fillStyle = '#fff4a3'; ctx.beginPath(); ctx.arc(x + rad * .27, hy - rad * .52, rad * .18, 0, 7); ctx.fill(); ctx.stroke();
-  } else if (e.hero === 'mimik') {
-    ctx.fillStyle = C.crate; ctx.fillRect(x - rad * .32, hy - rad * .22, rad * .64, rad * .42); ctx.strokeRect(x - rad * .32, hy - rad * .22, rad * .64, rad * .42);
+  const img = HERO_IMG[e.hero];
+  if (img) {
+    ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(x, y + rad * .85, rad * .9, rad * .32, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = e.color; ctx.lineWidth = e.isPlayer ? 3.5 : 2.5; ctx.beginPath(); ctx.ellipse(x, y + rad * .85, rad * .98, rad * .38, 0, 0, 7); ctx.stroke();
+    const dir = Math.abs(e.fx) > .3 ? Math.sign(e.fx) : (e.lastDir || 1); e.lastDir = dir;
+    const face = HERO_FACE[e.hero], z = rad * 3.2;
+    if (e.hit > 0) ctx.globalAlpha = alpha * .5;
+    ctx.save(); ctx.translate(x, y - bob - rad * .2);
+    if (face && dir !== face) ctx.scale(-1, 1);
+    if (e.filter) ctx.filter = e.filter;
+    ctx.drawImage(img, -z / 2, -z / 2, z, z);
+    ctx.restore(); ctx.globalAlpha = alpha;
   } else {
-    ctx.fillStyle = '#2a1f3d'; roundRect(x - rad * .85, y - bob - rad * .32, rad * 1.7, rad * .52, rad * .22); ctx.fill();
-  }
-  const fx = ax * rad * .22, fy = ay * rad * .18;
-  for (const s of [-1, 1]) {
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x + s * rad * .32 + fx * .5, y - bob - rad * .05 + fy * .5, rad * .22, 0, 7); ctx.fill();
-    ctx.fillStyle = '#1e1a2b'; ctx.beginPath(); ctx.arc(x + s * rad * .32 + fx, y - bob - rad * .05 + fy, rad * .11, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(x, y + rad * .85, rad * .85, rad * .3, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = e.hit > 0 ? '#ffffff' : e.color; ctx.strokeStyle = '#1e1a2b'; ctx.lineWidth = Math.max(2, S * .06);
+    ctx.beginPath(); ctx.arc(x, y - bob, rad, 0, 7); ctx.fill(); ctx.stroke();
+    // weapon nub in facing direction
+    const m = Math.hypot(e.fx, e.fy) || 1, ax = e.fx / m, ay = e.fy / m;
+    ctx.fillStyle = e.weapon === 'blaster' ? '#3fa9f5' : '#f78c6b';
+    ctx.beginPath(); ctx.arc(x + ax * rad * 1.02, y - bob + ay * rad * 1.02, rad * .26, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(x - rad * .35, y - bob - rad * .4, rad * .28, 0, 7); ctx.fill();
+    const hy = y - bob - rad;
+    ctx.strokeStyle = '#1e1a2b'; ctx.lineWidth = Math.max(2, S * .05);
+    if (e.hero === 'rex') {
+      ctx.fillStyle = '#ff8a1f'; ctx.beginPath(); ctx.moveTo(x - rad * .5, hy + rad * .3); ctx.lineTo(x - rad * .32, hy - rad * .3); ctx.lineTo(x - rad * .08, hy + rad * .22);
+      ctx.lineTo(x + rad * .14, hy - rad * .38); ctx.lineTo(x + rad * .42, hy + rad * .26); ctx.closePath(); ctx.fill(); ctx.stroke();
+    } else if (e.hero === 'lumi') {
+      ctx.beginPath(); ctx.moveTo(x, hy + 2); ctx.lineTo(x + rad * .25, hy - rad * .45); ctx.stroke();
+      ctx.fillStyle = '#fff4a3'; ctx.beginPath(); ctx.arc(x + rad * .27, hy - rad * .52, rad * .18, 0, 7); ctx.fill(); ctx.stroke();
+    } else if (e.hero === 'mimik') {
+      ctx.fillStyle = C.crate; ctx.fillRect(x - rad * .32, hy - rad * .22, rad * .64, rad * .42); ctx.strokeRect(x - rad * .32, hy - rad * .22, rad * .64, rad * .42);
+    } else {
+      ctx.fillStyle = '#2a1f3d'; roundRect(x - rad * .85, y - bob - rad * .32, rad * 1.7, rad * .52, rad * .22); ctx.fill();
+    }
+    const fx = ax * rad * .22, fy = ay * rad * .18;
+    for (const s of [-1, 1]) {
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x + s * rad * .32 + fx * .5, y - bob - rad * .05 + fy * .5, rad * .22, 0, 7); ctx.fill();
+      ctx.fillStyle = '#1e1a2b'; ctx.beginPath(); ctx.arc(x + s * rad * .32 + fx, y - bob - rad * .05 + fy, rad * .11, 0, 7); ctx.fill();
+    }
   }
   if (e.bounceT > 0) { ctx.strokeStyle = 'rgba(185,140,240,.9)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y - bob, rad * 1.25, time * 4, time * 4 + 4.4); ctx.stroke(); }
   if (e.curse) {
     ctx.strokeStyle = 'rgba(182,255,158,.95)'; ctx.lineWidth = 2.5; ctx.setLineDash([4, 4]);
     ctx.beginPath(); ctx.arc(x, y - bob, rad * 1.15, -time * 3, -time * 3 + 6.28); ctx.stroke(); ctx.setLineDash([]);
   }
-  const bw = S * .8, bh = S * .11, bx = x - bw / 2, by = y - bob - rad - S * .2;
+  const bw = S * .8, bh = S * .11, bx = x - bw / 2, by = y - bob - (img ? rad * 1.62 : rad) - S * (img ? .12 : .2);
   ctx.fillStyle = 'rgba(0,0,0,.55)'; roundRect(bx - 1, by - 1, bw + 2, bh + 2, 3); ctx.fill();
   ctx.fillStyle = e.isPlayer ? '#06d6a0' : '#ef476f'; roundRect(bx, by, bw * Math.max(0, e.hp) / e.maxHp, bh, 2); ctx.fill();
   ctx.font = `600 ${Math.round(S * .24)}px Rubik, system-ui, sans-serif`; ctx.textAlign = 'center';
