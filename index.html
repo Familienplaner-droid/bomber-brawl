@@ -1052,9 +1052,12 @@ function showOver() {
 
 /* ---------- Rendering ---------- */
 function roundRect(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
-const HERO_IMG = {}, HERO_FACE = { rex: 1, lumi: 1, mimik: 0, schatten: -1 };
+const HERO_IMG = {};
 if (typeof Image !== 'undefined') ['rex', 'lumi', 'mimik', 'schatten'].forEach(k => {
-  const im = new Image(); im.onload = () => { HERO_IMG[k] = im; }; im.src = `heroes/hero-${k}.png`;
+  const set = {}; let left = 3;
+  ['front', 'side', 'back'].forEach(v => {
+    const im = new Image(); im.onload = () => { set[v] = im; if (--left === 0) HERO_IMG[k] = set; }; im.src = `heroes/${k}-${v}.png`;
+  });
 });
 const ICONS = {};
 if (typeof Image !== 'undefined') ['range', 'bomb', 'speed', 'heal', 'bounce', 'curse', 'star'].forEach(k => {
@@ -1121,6 +1124,24 @@ function drawStar(x, y, v) {
     ctx.fillText(v, cx, cy + 1); ctx.textBaseline = 'alphabetic';
   }
 }
+function drawLabel(e, x, by, alpha) {
+  ctx.globalAlpha = alpha;
+  const bw = S * .8, bh = S * .11, bx = x - bw / 2;
+  ctx.fillStyle = 'rgba(0,0,0,.55)'; roundRect(bx - 1, by - 1, bw + 2, bh + 2, 3); ctx.fill();
+  ctx.fillStyle = e.isPlayer ? '#06d6a0' : '#ef476f'; roundRect(bx, by, bw * Math.max(0, e.hp) / e.maxHp, bh, 2); ctx.fill();
+  ctx.font = `600 ${Math.round(S * .24)}px Rubik, system-ui, sans-serif`; ctx.textAlign = 'center';
+  ctx.fillStyle = e.isPlayer ? '#ffd23f' : '#fff6e0'; ctx.strokeStyle = 'rgba(0,0,0,.7)'; ctx.lineWidth = 3;
+  const label = mode === 'stars' ? `${e.name} ★${e.stars}` : e.name;
+  ctx.strokeText(label, x, by - S * .07); ctx.fillText(label, x, by - S * .07);
+  if (mode === 'stars' && e === leader) {
+    const cb = by - S * .42, cw = S * .3;
+    ctx.fillStyle = '#ffd23f'; ctx.strokeStyle = '#1e1a2b'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x - cw, cb); ctx.lineTo(x - cw, cb - S * .2); ctx.lineTo(x - cw * .5, cb - S * .09); ctx.lineTo(x, cb - S * .26);
+    ctx.lineTo(x + cw * .5, cb - S * .09); ctx.lineTo(x + cw, cb - S * .2); ctx.lineTo(x + cw, cb); ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+}
+let labelQ = [];
 function drawEnt(e, x, y, alpha) {
   const bob = e.moving ? Math.abs(Math.sin(e.walk)) * S * .06 : 0, rad = S * .36 * (e.boss ? 1.3 : 1);
   if (e.blastInv > 0 && fl(e.blastInv * 12) % 2) alpha *= .45;
@@ -1129,13 +1150,15 @@ function drawEnt(e, x, y, alpha) {
   if (img) {
     ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(x, y + rad * .85, rad * .9, rad * .32, 0, 0, 7); ctx.fill();
     ctx.strokeStyle = e.color; ctx.lineWidth = e.isPlayer ? 3.5 : 2.5; ctx.beginPath(); ctx.ellipse(x, y + rad * .85, rad * .98, rad * .38, 0, 0, 7); ctx.stroke();
-    const dir = Math.abs(e.fx) > .3 ? Math.sign(e.fx) : (e.lastDir || 1); e.lastDir = dir;
-    const face = HERO_FACE[e.hero], z = rad * 3.2;
+    let view = e.view || 'front';
+    if (Math.abs(e.fx) > .35 || Math.abs(e.fy) > .35) view = Math.abs(e.fx) >= Math.abs(e.fy) ? (e.fx < 0 ? 'left' : 'right') : (e.fy < 0 ? 'back' : 'front');
+    e.view = view;
+    const z = rad * 3.2;
     if (e.hit > 0) ctx.globalAlpha = alpha * .5;
     ctx.save(); ctx.translate(x, y - bob - rad * .2);
-    if (face && dir !== face) ctx.scale(-1, 1);
+    if (view === 'left') ctx.scale(-1, 1);
     if (e.filter) ctx.filter = e.filter;
-    ctx.drawImage(img, -z / 2, -z / 2, z, z);
+    ctx.drawImage(img[view === 'left' || view === 'right' ? 'side' : view], -z / 2, -z / 2, z, z);
     ctx.restore(); ctx.globalAlpha = alpha;
   } else {
     ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(x, y + rad * .85, rad * .85, rad * .3, 0, 0, 7); ctx.fill();
@@ -1170,19 +1193,7 @@ function drawEnt(e, x, y, alpha) {
     ctx.strokeStyle = 'rgba(182,255,158,.95)'; ctx.lineWidth = 2.5; ctx.setLineDash([4, 4]);
     ctx.beginPath(); ctx.arc(x, y - bob, rad * 1.15, -time * 3, -time * 3 + 6.28); ctx.stroke(); ctx.setLineDash([]);
   }
-  const bw = S * .8, bh = S * .11, bx = x - bw / 2, by = y - bob - (img ? rad * 1.62 : rad) - S * (img ? .12 : .2);
-  ctx.fillStyle = 'rgba(0,0,0,.55)'; roundRect(bx - 1, by - 1, bw + 2, bh + 2, 3); ctx.fill();
-  ctx.fillStyle = e.isPlayer ? '#06d6a0' : '#ef476f'; roundRect(bx, by, bw * Math.max(0, e.hp) / e.maxHp, bh, 2); ctx.fill();
-  ctx.font = `600 ${Math.round(S * .24)}px Rubik, system-ui, sans-serif`; ctx.textAlign = 'center';
-  ctx.fillStyle = e.isPlayer ? '#ffd23f' : '#fff6e0'; ctx.strokeStyle = 'rgba(0,0,0,.7)'; ctx.lineWidth = 3;
-  const label = mode === 'stars' ? `${e.name} ★${e.stars}` : e.name;
-  ctx.strokeText(label, x, by - S * .07); ctx.fillText(label, x, by - S * .07);
-  if (mode === 'stars' && e === leader) {
-    const cb = by - S * .42, cw = S * .3;
-    ctx.fillStyle = '#ffd23f'; ctx.strokeStyle = '#1e1a2b'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(x - cw, cb); ctx.lineTo(x - cw, cb - S * .2); ctx.lineTo(x - cw * .5, cb - S * .09); ctx.lineTo(x, cb - S * .26);
-    ctx.lineTo(x + cw * .5, cb - S * .09); ctx.lineTo(x + cw, cb - S * .2); ctx.lineTo(x + cw, cb); ctx.closePath(); ctx.fill(); ctx.stroke();
-  }
+  labelQ.push([e, x, y - bob - (img ? rad * 1.62 : rad) - S * (img ? .12 : .2), alpha]);
   ctx.globalAlpha = 1;
 }
 function hash(t) { let h = t * 2654435761 >>> 0; h ^= h >>> 15; return (h % 1000) / 1000; }
@@ -1260,6 +1271,7 @@ function render() {
     const k = 1 - b.t / .45; ctx.strokeStyle = `rgba(255,236,170,${1 - k})`; ctx.lineWidth = S * .12 * (1 - k) + 1;
     ctx.beginPath(); ctx.arc(b.x * S, b.y * S, (b.r + .5) * S * k, 0, 7); ctx.stroke();
   }
+  labelQ = [];
   const sorted = ents.filter(e => e.alive && e.f === curF).sort((a, b) => a.y - b.y);
   for (const e of sorted) {
     const inBush = bush[idx(fl(e.x), fl(e.y))];
@@ -1280,6 +1292,7 @@ function render() {
     for (const [ox, oy, rr] of [[.3,.32,.26],[.7,.27,.24],[.5,.6,.3],[.22,.68,.2],[.78,.68,.22]]) { ctx.beginPath(); ctx.arc(x + ox * S, y + oy * S, rr * S, 0, 7); ctx.fill(); }
     ctx.globalAlpha = 1;
   }
+  for (const L of labelQ) drawLabel(...L);
   for (const s of shots) if (s.f === curF) {
     const m = Math.hypot(s.vx, s.vy), tx = s.vx / m, ty = s.vy / m;
     ctx.strokeStyle = s.color; ctx.lineWidth = S * .13; ctx.lineCap = 'round';

@@ -24,5 +24,6 @@ Stilvorgaben aus dem Titelbild (`title.jpg`): kräftige 2D-Cartoon-Optik, dicke 
 - `index.html`: kompletter Browser-Prototyp, läuft über GitHub Pages
 - `title.jpg`: Titelbild (Startbildschirm und Menü-Hintergrund)
 - `icons/`: Power-up- und Stern-Icons (192 px PNG, mit ChatGPT erstellt, Hintergrund entfernt)
-- `heroes/`: Spielfiguren Rex, Lumi, Mimik, Schatten (192 px PNG, mit ChatGPT nach Vorlage des Titelbilds erstellt). Endgegner nutzen dieselben Bilder mit Farbfilter.
+- `heroes/hero-*.png`: Porträts der Helden für die Heldenwahl (mit Requisiten wie Bombe und Kiste)
+- `heroes/<held>-front|side|back.png`: Spielfeld-Figuren ohne Requisiten, Seitenansicht schaut nach rechts, links wird gespiegelt. Endgegner nutzen dieselben Bilder mit Farbfilter.
 - `TESTEN.md`: Testanleitung für Tester
