@@ -1,4 +1,4 @@
-# Boomtown Brawl
+# Blastopia
 
 Prototyp eines Handy-Spiels: Bomben legen wie im Klassiker, schießen und Helden wie in Brawl Stars, dazu Stockwerke, Flüche und Lüftungsschächte. 12 Spieler, jeder gegen jeden, gegen Bots.
 

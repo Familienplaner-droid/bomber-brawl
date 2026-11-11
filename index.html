@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#1e1a2b">
-<meta name="description" content="Boomtown Brawl: Prototyp eines Handy-Spiels. Bomben, Schießen, Helden, Stockwerke und Story-Modus.">
-<title>Boomtown Brawl</title>
+<meta name="description" content="Blastopia: Prototyp eines Handy-Spiels. Bomben, Schießen, Helden, Stockwerke und Story-Modus.">
+<title>Blastopia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;600;800&display=swap">
 <style>
@@ -148,7 +148,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
 </style>
 </head>
 <body>
-<div class="rotate" id="rotate" role="alert"><div class="phone" aria-hidden="true"></div><b>Handy quer halten</b><span>Boomtown Brawl wird im Querformat gespielt. Dreh dein Handy, dann geht es weiter.</span></div>
+<div class="rotate" id="rotate" role="alert"><div class="phone" aria-hidden="true"></div><b>Handy quer halten</b><span>Blastopia wird im Querformat gespielt. Dreh dein Handy, dann geht es weiter.</span></div>
 <canvas id="game"></canvas>
 <div class="hud">
   <div class="alive" id="alive">12<small>übrig</small></div>
@@ -166,7 +166,7 @@ body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--font-bo
   <div class="card menu">
     <div class="col">
     <div class="tag">Prototyp · Jeder gegen jeden · 12 Spieler</div>
-    <h1>Boomtown Brawl</h1>
+    <h1>Blastopia</h1>
     <div class="tag">Held</div>
     <div class="heroes" id="heroes">
       <button class="hero" data-hero="rex" aria-pressed="true"><b><i style="background:#ff8a1f"></i>Rex</b><span>Sprengmeister · Streuer</span><em>Megabombe</em></button>
@@ -262,7 +262,7 @@ const HEROES = {
   schatten: { name: 'Schatten', weapon: 'streuer', hp: 7, speed: 3.4, sup: 'lightsout', supName: 'Licht aus', info: 'Schatten ist am schnellsten (7 Leben). Super Licht aus: 6 Sekunden Dunkelheit für alle anderen, nur du siehst die ganze Ebene.' },
 };
 const HERO_KEYS = Object.keys(HEROES);
-const CITY = 'Boomtown';
+const CITY = 'Blastopia';
 const CAMPAIGNS = [
   { id: 'tiefe', name: 'Die verschüttete Stadt', pitch: `${CITY} ist über Nacht in der Tiefe versunken. Grab dich hinab und finde heraus, warum.`, chapters: [
     { title: 'Der Einsturz', level: 'fall', bots: 4, goal: 'reach', floor: 1,
@@ -1032,7 +1032,7 @@ function showOver() {
   } else {
     const won = player.alive;
     if (won) { player.place = 1; deathTime = time; }
-    lbl('overTag', won ? 'Letzter in Boomtown' : 'Ausgeschieden'); lbl('overPlace', won ? 'Sieg!' : `Platz ${player.place}`);
+    lbl('overTag', won ? 'Letzter in Blastopia' : 'Ausgeschieden'); lbl('overPlace', won ? 'Sieg!' : `Platz ${player.place}`);
     lbl('oKills', player.kills); lbl('l1', 'Erwischt'); lbl('oTime', fmt(deathTime)); lbl('l2', 'Überlebt');
   }
   lbl('oCrates', crates); lbl('againBtn', 'Nochmal'); lbl('menuBtn', 'Level wählen');
